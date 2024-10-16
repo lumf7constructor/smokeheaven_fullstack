@@ -1,24 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 import './Products.css'; // Import custom CSS for styling
 
 function Products() {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Cigarette',
-      price: 9.99,
-      stock: 50,
-      image: 'malborowhite.jpeg', // Make sure to have a placeholder image in the public/images folder
-    },
-    {
-      id: 1,
-      name: 'Vape',
-      price: 9.99,
-      stock: 50,
-      image: 'test-cigarette.jpg', // Make sure to have a placeholder image in the public/images folder
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     axios.get('/api/products')
@@ -29,20 +15,23 @@ function Products() {
   return (
     <div className="products-container">
       <h2>Our Products</h2>
-      {products.length ? (
-        <div className="product-grid">
-          {products.map(product => (
-            <div key={product.id} className="product-card">
-              <img src={`/images/${product.image}`} alt={product.name} className="product-image" />
-              <h3 className="product-name">{product.name}</h3>
-              <p className="product-price">${product.price}</p>
-              <p className="product-stock">Stock: {product.stock}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No products available</p>
-      )}
+      <div className="product-grid">
+        <Link to="/products/cigarettes" className="product-card">
+          <img src="/images/malborowhite.jpeg" alt="Cigarettes" className="product-image" />
+          <h3 className="product-name">Cigarettes</h3>
+        </Link>
+
+        <Link to="/products/vapes" className="product-card">
+          <img src="/images/test-cigarette.jpg" alt="Vapes" className="product-image" />
+          <h3 className="product-name">Vapes</h3>
+        </Link>
+
+        <Link to="/products/hookahs" className="product-card">
+          <img src="/images/hookah.jpg" alt="Hookahs" className="product-image" />
+          <h3 className="product-name">Hookahs</h3>
+        </Link>
+      </div>
+      {products.length === 0 && <p>No products available</p>}
     </div>
   );
 }

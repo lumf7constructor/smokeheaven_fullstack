@@ -12,7 +12,7 @@ function Products() {
       image: 'malborowhite.jpeg', // Make sure to have a placeholder image in the public/images folder
     },
     {
-      id: 1,
+      id: 2,
       name: 'Vape',
       price: 9.99,
       stock: 50,

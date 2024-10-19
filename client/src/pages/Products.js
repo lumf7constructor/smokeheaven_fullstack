@@ -22,7 +22,7 @@ function Products() {
         </Link>
 
         <Link to="/products/vapes" className="product-card">
-          <img src="/images/test-cigarette.jpg" alt="Vapes" className="product-image" />
+          <img src="/images/Vapes.jpg" alt="Vapes" className="product-image" />
           <h3 className="product-name">Vapes</h3>
         </Link>
 

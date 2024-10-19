@@ -1,55 +1,68 @@
 /* Home.css */
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-  }
-  
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: white;
-    text-align: center;
-  }
-  
-  .logo-section {
-    margin-bottom: 20px;
-  }
-  
-  .logo {
-    width: 200px;
-    height: auto;
-  }
-  
-  h1 {
-    font-size: 3rem;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #555;
-    margin-bottom: 30px;
-  }
-  
-  .products-button {
-    margin-top: 20px;
-  }
-  
-  .products-button .btn {
-    text-decoration: none;
-    padding: 12px 24px;
-    background-color: #333;
-    color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  
-  .products-button .btn:hover {
-    background-color: #555;
-  }
-  
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: white;
+  text-align: center;
+}
+
+.logo-section {
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 200px;
+  height: auto;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.products-button {
+  margin-top: 20px;
+}
+
+.products-button .btn {
+  text-decoration: none;
+  padding: 12px 24px;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.products-button .btn:hover {
+  background-color: #555;
+}
+
+/* Footer Styles */
+.footer {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  text-align: left;
+}
+
+.footer p {
+  font-size: 0.8rem; /* Smaller font size for footer paragraphs */
+  color: #333;
+}
+

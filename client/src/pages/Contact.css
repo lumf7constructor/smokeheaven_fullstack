@@ -1,0 +1,101 @@
+/* Main container to center everything */
+.contact-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    min-height: 80vh;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text color */
+  }
+  
+  /* Center the heading */
+  .contact-container h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  
+  /* Style the form itself */
+  .contact-form {
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Form labels */
+  .contact-form label {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #ddd; /* Light gray label color */
+  }
+  
+  /* Input and textarea fields */
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333; /* Darker input background */
+    color: #fff; /* White text in inputs */
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  
+  .contact-form input:hover,
+  .contact-form textarea:hover {
+    background-color: #444;
+  }
+  
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: 2px solid #888;
+  }
+  
+  /* Submit button */
+  .contact-form button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .contact-form button:hover {
+    background-color: #444;
+    color: #fff;
+  }
+  
+  /* Add fade-in animation */
+  .contact-form {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

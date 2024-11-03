@@ -1,50 +1,55 @@
-// const express = require('express');
-// const mysql = require('mysql2');
-// const cors = require('cors'); // import CORS
+const express = require('express');
+const mysql = require('mysql2');
+const cors = require('cors'); // import CORS
 
-// const app = express();
-// const port = 3000;
+const app = express();
+const port = 3002;
 
-// // Apply middleware
-// app.use(cors());
-// app.use(express.json()); // Allows parsing of JSON request bodies
+// Apply middleware
+app.use(cors());
+app.use(express.json()); // Allows parsing of JSON request bodies
 
-// // MySQL connection
-// const db = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'mern_user',
-//   password: 'password',
-//   database: 'mern_db'
-// });
+// MySQL connection
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'mern_user',
+  password: 'password',
+  database: 'mern_db'
+});
 
-// db.connect((err) => {
-//   if (err) throw err;
-//   console.log('Connected to MySQL');
-// });
 
-// // Get all users (sample route)
-// app.get('/api/users', (req, res) => {
-//   db.query('SELECT * FROM users', (err, results) => {
-//     if (err) throw err;
-//     res.json(results);
-//   });
-// });
+// Connect to MySQL
+db.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL:', err);
+      return; // Exit if there's an error connecting
+    }
+    console.log('Connected to MySQL');
+  });
+  
+  // Example API route
+  app.get('/api/test', (req, res) => {
+    res.send('MySQL connection is working!');
+  });
 
-// // Add order (new route)
-// app.post('/api/orders', (req, res) => {
-//   const { productId, name, price, quantity } = req.body;
+  // Existing imports and connection code
 
-//   const query = 'INSERT INTO orders (product_id, product_name, price, quantity) VALUES (?, ?, ?, ?)';
-//   db.query(query, [productId, name, price, quantity], (err, result) => {
-//     if (err) {
-//       console.error('Error inserting order:', err);
-//       res.status(500).send('Error inserting order');
-//     } else {
-//       res.status(201).send('Order added successfully');
-//     }
-//   });
-// });
+app.post('/api/reviews', (req, res) => {
+  const { productId, comment, rating } = req.body;
+  const date = new Date(); // Set the current date
 
-// app.listen(port, () => {
-//   console.log(`Server running on http://localhost:${port}`);
-// });
+  const query = 'INSERT INTO Review (Rating, Comment, Date, ProductID) VALUES (?, ?, ?, ?)';
+  db.query(query, [rating, comment, date, productId], (err, results) => {
+      if (err) {
+          console.error('Error adding review:', err);
+          return res.status(500).json({ message: 'Error adding review.' });
+      }
+      res.status(201).json({ message: 'Review added successfully!' });
+  });
+});
+
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+

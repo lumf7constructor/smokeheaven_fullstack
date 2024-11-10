@@ -13,7 +13,7 @@ function Cigarettes() {
         </Link>
         <Link to="/products/cigarettes/heavy" className="product-option">
           <h3>Heavy Cigarettes</h3>
-          <img src="/images/black-cigarettes.jpg" alt="Heavy Cigarettes" className="option-image" />
+          <img src="/images/lucky-strike.jpg" alt="Heavy Cigarettes" className="option-image" />
         </Link>
       </div>
     </div>

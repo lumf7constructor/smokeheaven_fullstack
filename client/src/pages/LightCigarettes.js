@@ -1,31 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Cigarettes.css';
 
-const lightCigarettes = [
-  {
-    id: 1,
-    name: 'Marlboro White',
-    price: 9.99,
-    description: 'Smooth and light, perfect for a relaxing smoke.',
-    image: 'malborowhite.jpeg',
-  },
-  {
-    id: 2,
-    name: 'Camel',
-    price: 8.99,
-    description: 'Rich flavor with a classic blend.',
-    image: 'camel.jpg',
-  },
-  {
-    id: 3,
-    name: 'Jet',
-    price: 7.99,
-    description: 'A bold flavor experience.',
-    image: 'jet.jpg',
-  },
-];
-
 function LightCigarettes() {
+  const [lightCigarettes, setLightCigarettes] = useState([]);
+
+  useEffect(() => {
+    const fetchLightCigarettes = async () => {
+      try {
+        const response = await fetch('/api/light-cigarettes');
+        const data = await response.json();
+        console.log('Fetched data:', data);  // Log the fetched data
+        
+        // Check if the data is empty
+        if (data.length === 0) {
+          console.log('No products found.');
+        }
+  
+        // Add images to the products
+        const cigarettesWithImages = data.map(product => ({
+          ...product,
+          image: getImageForProduct(product.Name),
+        }));
+  
+        setLightCigarettes(cigarettesWithImages);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchLightCigarettes();
+  }, []);
+  
+
+  // Function to assign images based on product name
+  const getImageForProduct = (productName) => {
+    switch (productName) {
+      case 'Marlboro Light Pack':
+        return 'malborowhite.jpeg';
+      case 'American Spirit Yellow':
+        return 'american_spirit_yellow.jpg';
+      case 'Benson & Hedges Gold':
+        return 'benson_hedges_gold.jpg';
+      case 'Virginia Slims Menthol':
+        return 'virginia_slims_menthol.jpg';
+      case 'Newport Menthol 100s':
+        return 'newport_menthol_100s.jpg';
+      default:
+        return 'default_image.jpg';
+    }
+  };
+
   const addToCart = async (product) => {
     try {
       const response = await fetch('/api/orders', {
@@ -34,15 +58,15 @@ function LightCigarettes() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          productId: product.id,
-          name: product.name,
-          price: product.price,
+          productId: product.ProductID,
+          name: product.Name,
+          price: product.Price,
           quantity: 1,
         }),
       });
 
       if (response.ok) {
-        alert(`${product.name} added to cart successfully!`);
+        alert(`${product.Name} added to cart successfully!`);
       } else {
         alert('Failed to add to cart');
       }
@@ -56,17 +80,20 @@ function LightCigarettes() {
     <div className="cigarette-container">
       <h2>Light Cigarettes</h2>
       <div className="cigarette-grid">
-        {lightCigarettes.map(product => (
-          <div key={product.id} className="cigarette-card">
-            <img src={`/images/${product.image}`} alt={product.name} className="cigarette-image" />
-            <h3 className="cigarette-name">{product.name}</h3>
-            <p className="cigarette-description">{product.description}</p>
-            <p className="cigarette-price">${product.price.toFixed(2)}</p>
-            <button className="add-to-cart-button" onClick={() => addToCart(product)}>
-              Add to Cart
-            </button>
-          </div>
-        ))}
+        {lightCigarettes.length === 0 ? (
+          <p>No products found.</p> // Message if no data is loaded
+        ) : (
+          lightCigarettes.map(product => (
+            <div key={product.ProductID} className="cigarette-card">
+              <img src={`/images/${product.image}`} alt={product.Name} className="cigarette-image" />
+              <h3 className="cigarette-name">{product.Name}</h3>
+              <p className="cigarette-price">${Number(product.Price).toFixed(2)}</p>
+              <button className="add-to-cart-button" onClick={() => addToCart(product)}>
+                Add to Cart
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

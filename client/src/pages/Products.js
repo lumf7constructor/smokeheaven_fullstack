@@ -31,7 +31,7 @@ function Products() {
           <h3 className="product-name">Hookahs</h3>
         </Link>
       </div>
-      {products.length === 0 && <p>No products available</p>}
+      {products.length === 0 && <p></p>}
     </div>
   );
 }

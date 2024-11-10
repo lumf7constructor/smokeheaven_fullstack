@@ -34,20 +34,82 @@ db.connect((err) => {
 
   // Existing imports and connection code
 
+// After your other routes in server.js
 app.post('/api/reviews', (req, res) => {
-  const { productId, comment, rating } = req.body;
-  const date = new Date(); // Set the current date
+  const { rating, comment, productId } = req.body;
+  const date = new Date(); // Get the current date
 
   const query = 'INSERT INTO Review (Rating, Comment, Date, ProductID) VALUES (?, ?, ?, ?)';
   db.query(query, [rating, comment, date, productId], (err, results) => {
       if (err) {
-          console.error('Error adding review:', err);
-          return res.status(500).json({ message: 'Error adding review.' });
+          console.error('Error inserting review:', err);
+          return res.status(500).json({ message: 'Error adding review' });
       }
-      res.status(201).json({ message: 'Review added successfully!' });
+      res.status(201).json({ message: 'Review added successfully', reviewId: results.insertId });
   });
 });
 
+app.get('/api/light-cigarettes', (req, res) => {
+  const query = 'SELECT * FROM LightCigarettes';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching data from database:', err);
+      return res.status(500).json({ message: 'Error fetching data' });
+    }
+    res.json(results);  // Send data as JSON
+  });
+});
+
+// Route for fetching heavy cigarettes
+app.get('/api/heavy-cigarettes', (req, res) => {
+  const query = 'SELECT * FROM HeavyCigarettes';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching data from database:', err);
+      return res.status(500).json({ message: 'Error fetching data' });
+    }
+    res.json(results);  // Send data as JSON
+  });
+});
+
+// Route to get hookahs from the database
+app.get('/api/hookahs', (req, res) => {
+  const query = 'SELECT ProductID, Name, Price FROM Hookah';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching hookahs:', err);
+      res.status(500).json({ error: 'Failed to fetch hookahs' });
+    } else {
+      res.json(results); // Send hookah data to the frontend
+    }
+  });
+});
+
+// Route to get resusable vapes from the database
+app.get('/api/reusable-vapes', (req, res) => {
+  const query = 'SELECT ProductID, Name, Price FROM ReusableVape';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching vapes:', err);
+      res.status(500).json({ error: 'Failed to fetch vapes' });
+    } else {
+      res.json(results); // Send vape data to the frontend
+    }
+  });
+});
+
+// Route to get disposable vapes from the database
+app.get('/api/disposable-vapes', (req, res) => {
+  const query = 'SELECT ProductID, Name, Price FROM DisposableVape';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching vapes:', err);
+      res.status(500).json({ error: 'Failed to fetch vapes' });
+    } else {
+      res.json(results); // Send vape data to the frontend
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

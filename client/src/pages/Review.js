@@ -1,6 +1,5 @@
-// src/pages/Review.js
 import React, { useState } from 'react';
-import './Review.css'; // Make sure the CSS file is named correctly
+import './Review.css'; // Ensure this path is correct
 
 const Review = () => {
     const [productId, setProductId] = useState('');
@@ -17,7 +16,7 @@ const Review = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3002/api/reviews', { // Ensure port is correct
+            const response = await fetch('http://localhost:3002/api/reviews', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -26,16 +25,20 @@ const Review = () => {
             });
 
             if (response.ok) {
+                const data = await response.json();
                 alert('Review added successfully!');
                 // Clear the form
                 setProductId('');
                 setComment('');
                 setRating('');
             } else {
-                alert('Error adding review.');
+                const errorData = await response.json(); // Get the error details
+                alert(`Error adding review: ${errorData.message}`);
+                console.error('Response:', errorData);
             }
         } catch (error) {
             console.error('Error:', error);
+            alert('Error adding review.');
         }
     };
 

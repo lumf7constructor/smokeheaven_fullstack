@@ -111,6 +111,48 @@ app.get('/api/disposable-vapes', (req, res) => {
   });
 });
 
+app.get('/api/products/search', (req, res) => {
+  const { productType, brand } = req.query;
+
+  if (!productType || !brand) {
+    return res.status(400).json({ message: 'Product type and brand query parameters are required' });
+  }
+
+  let query = '';
+  let searchPattern = `%${brand.toLowerCase()}%`;
+
+  switch (productType) {
+    case 'Cigarette':
+      // Query both LightCigarettes and HeavyCigarettes using LOWER() to ensure a case-insensitive match
+      query = `
+        SELECT ProductID, 'Light' AS Category, Name, Price FROM LightCigarettes WHERE LOWER(Name) LIKE ?
+        UNION
+        SELECT ProductID, 'Heavy' AS Category, Name, Price FROM HeavyCigarettes WHERE LOWER(Name) LIKE ?
+      `;
+      break;
+    case 'Hookah':
+      query = `SELECT ProductID, Brand, Name, Flavor, Price FROM Hookah WHERE LOWER(Brand) LIKE ?`;
+      break;
+    case 'ReusableVape':
+      query = `SELECT ProductID, Name, NumberOfPuffs, Price FROM ReusableVape WHERE LOWER(Name) LIKE ?`;
+      break;
+    case 'DisposableVape':
+      query = `SELECT ProductID, Name, LastingTime, Price FROM DisposableVape WHERE LOWER(Name) LIKE ?`;
+      break;
+    default:
+      return res.status(400).json({ message: 'Invalid product type' });
+  }
+
+  db.query(query, [searchPattern, searchPattern], (err, results) => {
+    if (err) {
+      console.error('Error searching for product:', err);
+      return res.status(500).json({ message: 'Error searching for product' });
+    }
+    res.json(results);
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

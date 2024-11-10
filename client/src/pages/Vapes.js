@@ -9,7 +9,7 @@ function Vapes() {
       <div className="product-options">
         <Link to="/products/vapes/reusable" className="product-option">
           <h3>Reusable Vapes</h3>
-          <img src="/images/malborowhite.jpeg" alt="Reusable Vapes" className="option-image" />
+          <img src="/images/smok-nord-4.jpg" alt="Reusable Vapes" className="option-image" />
         </Link>
         <Link to="/products/vapes/disposable" className="product-option">
           <h3>Disposable Vapes</h3>

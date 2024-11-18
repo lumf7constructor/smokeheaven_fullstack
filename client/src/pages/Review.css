@@ -1,112 +1,67 @@
-/* Global styles */
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4; /* Light background color */
-}
-
-/* Navbar styles */
-.navbar {
-    background-color: #333;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-}
-
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 14px 20px;
-    display: inline-block;
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-.navbar a:hover {
-    background-color: #575757; /* Darker background on hover */
-}
-
-/* Container styles */
-.container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 20px;
-    background: white;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 8px; /* Rounded corners */
-}
-
-/* Review form styles */
+/* Review form container */
 form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Two columns: labels and inputs */
+    grid-gap: 1rem; /* Spacing between rows and columns */
+    max-width: 600px; /* Centered form with a max width */
+    margin: 2rem auto; /* Centered horizontally */
+    align-items: center; /* Align elements in the middle */
 }
 
-/* Improved spacing */
-form div {
-    margin-bottom: 1.5rem;
-}
-
+/* Align labels and inputs */
 label {
-    margin-bottom: 0.5rem;
+    text-align: right; /* Align labels to the right */
+    margin-right: 1rem;
     font-weight: bold;
-    color: #555; /* Slightly lighter color for labels */
+    color: #333; /* Neutral dark text */
 }
 
-/* Inputs and Textarea */
+/* Style inputs and textarea */
 input[type="number"],
 textarea {
-    padding: 10px;
+    width: 100%; /* Full width of the input column */
+    padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 4px; /* Rounded corners */
+    border-radius: 6px;
     font-size: 16px;
-    transition: border-color 0.3s; /* Smooth transition */
+    background-color: #f4f4f4; /* Subtle gray background */
+    transition: border-color 0.3s ease-in-out;
 }
 
-/* Focus effect */
 input[type="number"]:focus,
 textarea:focus {
-    border-color: #007bff; /* Blue border on focus */
-    outline: none; /* Remove default outline */
+    border-color: #000; /* Black border on focus */
+    background-color: #fff; /* White background on focus */
+    outline: none;
 }
 
 /* Textarea specific styles */
 textarea {
-    resize: vertical; /* Allow vertical resizing */
-    min-height: 100px; /* Minimum height for textarea */
+    resize: vertical;
+    min-height: 100px;
 }
 
-/* Button styles */
+/* Submit button */
 button {
-    padding: 10px;
-    background-color: #5cb85c; /* Bootstrap green */
-    border: none;
-    color: white;
+    grid-column: span 2; /* Span across both columns */
+    padding: 12px;
+    background-color: #000; /* Black button */
+    color: #fff;
     font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
-    border-radius: 4px; /* Rounded corners */
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s ease-in-out;
 }
 
 button:hover {
-    background-color: #4cae4c; /* Darker green on hover */
+    background-color: #444; /* Darker shade on hover */
 }
 
 /* Header styles */
 h2 {
-    color: #333;
-    margin-bottom: 1.5rem; /* Spacing below the header */
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-
-    input[type="number"],
-    textarea,
-    button {
-        font-size: 14px; /* Slightly smaller font on smaller screens */
-    }
+    text-align: center; /* Center the header */
+    margin-bottom: 2rem;
+    color: #000; /* Black text */
 }

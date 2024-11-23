@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Cart.css';
 
 function Cart() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -48,6 +49,15 @@ function Cart() {
         setLoading(false);
       });
   }, [navigate]);
+
+  useEffect(() => {
+    // Remove the token only if navigating away from the Cart page
+    return () => {
+      if (location.pathname !== '/cart') {
+        localStorage.removeItem('token');
+      }
+    };
+  }, [location]);
 
   if (loading) {
     return <p>Loading orders...</p>;

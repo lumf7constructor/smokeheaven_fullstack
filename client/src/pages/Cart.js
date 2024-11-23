@@ -1,20 +1,57 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Cart.css';
 
 function Cart() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch orders data from the backend
-    fetch('/api/orders')
-      .then((response) => response.json())
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You need to log in to access this page.');
+      navigate('/login');
+      return;
+    }
+
+    fetch('/api/orders', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          alert('Session expired. Please log in again.');
+          navigate('/login');
+          return;
+        }
+        return response.json();
+      })
       .then((data) => {
-        setOrders(data);  // Assuming the response is an array of orders
+        if (Array.isArray(data)) {
+          const parsedOrders = data.map((order) => ({
+            ...order,
+            Products:
+              typeof order.Products === 'string'
+                ? JSON.parse(order.Products)
+                : [], // Parse Products only if it's a string
+          }));
+          setOrders(parsedOrders);
+        } else {
+          console.error('Unexpected API response:', data);
+        }
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching orders:', error);
+        setLoading(false);
       });
-  }, []);
+  }, [navigate]);
+
+  if (loading) {
+    return <p>Loading orders...</p>;
+  }
 
   return (
     <div className="cart-container">
@@ -27,7 +64,7 @@ function Cart() {
             <th>Total Amount</th>
             <th>Shipping Address</th>
             <th>Customer ID</th>
-            <th>Products</th> {/* Added Products column */}
+            <th>Products</th>
           </tr>
         </thead>
         <tbody>
@@ -44,13 +81,10 @@ function Cart() {
                 <td>{order.ShippingAddress}</td>
                 <td>{order.CustomerID}</td>
                 <td>
-                  {/* Render each product's details in the Products array */}
                   <ul>
-                    {order.Products && Array.isArray(order.Products) && order.Products.map((product, index) => (
+                    {order.Products.map((product, index) => (
                       <li key={index}>
-                        <strong>{product.name}</strong><br />
-                        Price: ${product.price.toFixed(2)}<br />
-                        Quantity: {product.quantity}
+                        <strong>{product.name}</strong> - ${product.price.toFixed(2)} (x{product.quantity})
                       </li>
                     ))}
                   </ul>

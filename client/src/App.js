@@ -12,6 +12,8 @@ import DisposableVapes from './pages/DisposableVapes'; // New Heavy Cigarettes p
 import Hookahs from './pages/Hookahs';
 import Contact from './pages/Contact';
 import Review from './pages/Review';
+import Cart from './pages/Cart';
+import MyCart from './pages/MyCart';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/products/hookahs" element={<Hookahs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/review" element={<Review />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/mycart" element={<MyCart />} />
       </Routes>
     </Router>
   );

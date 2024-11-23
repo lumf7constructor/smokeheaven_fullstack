@@ -26,6 +26,11 @@ function Navbar() {
         <li><Link to="/products" onClick={() => setMenuOpen(false)}>Products</Link></li>
         <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact Us</Link></li>
         <li><Link to="/review" onClick={() => setMenuOpen(false)}>Review</Link></li>
+        <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Orders</Link></li>
+        <li><Link to="/mycart" onClick={() => setMenuOpen(false)}>
+          <img src="/images/cart.png" alt="Cart" style={{ width: '24px', height: '24px' }} />
+        </Link>
+        </li>
       </ul>
     </nav>
   );

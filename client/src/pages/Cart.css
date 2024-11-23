@@ -1,0 +1,77 @@
+/* General styling */
+.cart-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 2rem;
+  }
+  
+  /* Styling for the table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  td {
+    background-color: #fff;
+    color: #333;
+  }
+  
+  td:hover {
+    background-color: #f9f9f9;
+  }
+  
+  table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  /* Adding space around the form inputs if you add any form in the future */
+  input[type="text"], input[type="email"], textarea {
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+  
+  button {
+    padding: 12px 20px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #218838;
+  }
+  
+  form {
+    margin-top: 20px;
+  }
+  

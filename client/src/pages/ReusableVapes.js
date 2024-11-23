@@ -44,24 +44,34 @@ function ReusableVapes() {
 
   const addToCart = async (product) => {
     try {
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const price = parseFloat(product.Price);
+      if (isNaN(price)) {
+        console.error('Invalid price:', product.Price);
+        return;
+      }
+  
+      // Ensure the product is added to the cart
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+      const existingProductIndex = cart.findIndex(item => item.productId === product.ProductID);
+      if (existingProductIndex >= 0) {
+        // Increase the quantity if the product is already in the cart
+        cart[existingProductIndex].quantity += 1;
+      } else {
+        // Add new product to the cart
+        cart.push({
           productId: product.ProductID,
           name: product.Name,
-          price: product.Price,
+          price: price,
           quantity: 1,
-        }),
-      });
-
-      if (response.ok) {
-        alert(`${product.Name} added to cart successfully!`);
-      } else {
-        alert('Failed to add to cart');
+          image: product.image,
+        });
       }
+  
+      // Save to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+  
+      alert(`${product.Name} added to cart successfully!`);
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('An error occurred while adding to cart');

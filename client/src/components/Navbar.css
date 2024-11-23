@@ -94,7 +94,7 @@ nav .menu li a:hover {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-@media screen and (max-width: 790px) {
+@media screen and (max-width: 1000px) {
   .hamburger {
     display: block;
   }
@@ -109,6 +109,8 @@ nav .menu li a:hover {
     align-items: center;
   }
   nav .menu.active {
-    display: flex; /* Show menu when active */
-  }
+    display: flex; /* Show menu as flex on active */
+    flex-direction: row; /* Stack menu items vertically */
+    align-items: center;
+  }  
 }

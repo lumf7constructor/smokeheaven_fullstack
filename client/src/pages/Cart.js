@@ -33,10 +33,7 @@ function Cart() {
         if (Array.isArray(data)) {
           const parsedOrders = data.map((order) => ({
             ...order,
-            Products:
-              typeof order.Products === 'string'
-                ? JSON.parse(order.Products)
-                : [], // Parse Products only if it's a string
+            Products: Array.isArray(order.Products) ? order.Products : [] // Ensure Products is always an array
           }));
           setOrders(parsedOrders);
         } else {
@@ -48,6 +45,7 @@ function Cart() {
         console.error('Error fetching orders:', error);
         setLoading(false);
       });
+      
   }, [navigate]);
 
   useEffect(() => {

@@ -254,23 +254,35 @@ app.post('/api/submitorder', (req, res) => {
 });
 
 
-// Middleware to log requests
+// Middleware to log requests to any route
 app.use((req, res, next) => {
   const { method, url, headers } = req;
-  const ip = req.ip || req.connection.remoteAddress;
-  const userAgent = headers['user-agent'];
+  const ip = req.ip || req.connection.remoteAddress;  // Get the IP address of the client
+  const userAgent = headers['user-agent'];  // Get the User-Agent string from the headers
 
+  // SQL query to insert the request log into the database
   const query = `
       INSERT INTO RequestLog (Method, URL, IP, Browser, Timestamp)
       VALUES (?, ?, ?, ?, NOW())
   `;
 
+  // Execute the query to insert the data into the database
   db.query(query, [method, url, ip, userAgent], (err) => {
-      if (err) console.error('Error logging request:', err);
+      if (err) {
+          console.error('Error logging request:', err);
+      }
   });
 
+  // Pass control to the next middleware or route handler
   next();
 });
+
+// Now, the following route would log each access to /products
+app.get('/products', (req, res) => {
+// Your actual route logic here
+res.send('Products page');
+});
+
 
 // Middleware to log errors
 app.use((err, req, res, next) => {

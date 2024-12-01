@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Products from './pages/Products';
+import Products from './pages/api/Products';
 import Cigarettes from './pages/Cigarettes';
 import LightCigarettes from './pages/LightCigarettes';
 import HeavyCigarettes from './pages/HeavyCigarettes';

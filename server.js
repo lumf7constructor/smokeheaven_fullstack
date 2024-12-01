@@ -5,10 +5,98 @@ const crypto = require('crypto'); // import crypto for password hashing
 
 const app = express();
 const port = 3002;
+const { parse } = require('json2csv');  // Import json2csv's parse function
+const fs = require('fs');
+const path = require('path');
+
 
 // Apply middleware
 app.use(cors());
 app.use(express.json()); // Allows parsing of JSON request bodies
+
+
+// Middleware to log requests to any route
+app.use((req, res, next) => {
+  const { method, url, headers } = req;
+  const ip = req.ip || req.connection.remoteAddress;  // Get the IP address of the client
+  const userAgent = headers['user-agent'];  // Get the User-Agent string from the headers
+
+  // SQL query to insert the request log into the database
+  const query = `
+      INSERT INTO RequestLog (Method, URL, IP, Browser, Timestamp)
+      VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  // Execute the query to insert the data into the database
+  db.query(query, [method, url, ip, userAgent], (err) => {
+      if (err) {
+          console.error('Error logging request:', err);
+      }
+  });
+
+  // Pass control to the next middleware or route handler
+  next();
+});
+
+// Middleware to log errors
+app.use((err, req, res, next) => {
+  const { method, url } = req;
+  const ip = req.ip || req.connection.remoteAddress;
+
+  const query = `
+      INSERT INTO ErrorLog (Method, URL, IP, ErrorMessage, Timestamp)
+      VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  db.query(query, [method, url, ip, err.message], (dbErr) => {
+      if (dbErr) console.error('Error logging error:', dbErr);
+  });
+
+  res.status(500).json({ message: 'An error occurred' });
+});
+
+
+  // Query to fetch all logs from RequestLog table
+app.get('/export-request-logs', (req, res) => {
+  const query = 'SELECT * FROM RequestLog';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching request logs:', err);
+      return res.status(500).json({ message: 'Error fetching request logs' });
+    }
+
+    // Convert the query results to CSV
+    try {
+      const csvData = parse(results);  // Converts the JSON to CSV
+
+      // Define the path for the CSV file
+      const filePath = path.join(__dirname, 'exports', 'request_logs.csv');
+      
+      console.log(`File path for CSV: ${filePath}`);
+
+      // Make sure the "exports" folder exists
+      if (!fs.existsSync(path.dirname(filePath))) {
+        console.log('Creating exports folder...');
+        fs.mkdirSync(path.dirname(filePath));
+      }
+
+      // Write the CSV data to the file
+      fs.writeFileSync(filePath, csvData);
+      console.log('CSV file written successfully.');
+
+      // Send a response indicating the file was created
+      res.status(200).json({
+        message: 'Request logs exported successfully',
+        filePath: filePath
+      });
+    } catch (error) {
+      console.error('Error writing CSV file:', error);
+      res.status(500).json({ message: 'Error exporting request logs to CSV' });
+    }
+  });
+});
+
 
 // MySQL connection
 const db = mysql.createConnection({
@@ -254,52 +342,12 @@ app.post('/api/submitorder', (req, res) => {
 });
 
 
-// Middleware to log requests to any route
-app.use((req, res, next) => {
-  const { method, url, headers } = req;
-  const ip = req.ip || req.connection.remoteAddress;  // Get the IP address of the client
-  const userAgent = headers['user-agent'];  // Get the User-Agent string from the headers
-
-  // SQL query to insert the request log into the database
-  const query = `
-      INSERT INTO RequestLog (Method, URL, IP, Browser, Timestamp)
-      VALUES (?, ?, ?, ?, NOW())
-  `;
-
-  // Execute the query to insert the data into the database
-  db.query(query, [method, url, ip, userAgent], (err) => {
-      if (err) {
-          console.error('Error logging request:', err);
-      }
-  });
-
-  // Pass control to the next middleware or route handler
-  next();
-});
-
 // Now, the following route would log each access to /products
 app.get('/products', (req, res) => {
 // Your actual route logic here
 res.send('Products page');
 });
 
-
-// Middleware to log errors
-app.use((err, req, res, next) => {
-  const { method, url } = req;
-  const ip = req.ip || req.connection.remoteAddress;
-
-  const query = `
-      INSERT INTO ErrorLog (Method, URL, IP, ErrorMessage, Timestamp)
-      VALUES (?, ?, ?, ?, NOW())
-  `;
-
-  db.query(query, [method, url, ip, err.message], (dbErr) => {
-      if (dbErr) console.error('Error logging error:', dbErr);
-  });
-
-  res.status(500).json({ message: 'An error occurred' });
-});
 
 // Get statistics from logs
 app.get('/api/logs/statistics', (req, res) => {

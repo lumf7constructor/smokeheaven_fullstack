@@ -18,6 +18,7 @@ const db = mysql.createConnection({
   database: 'mern_db'
 });
 
+
 // Helper function to hash passwords
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -25,19 +26,19 @@ function hashPassword(password) {
 
 // Connect to MySQL
 db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return; // Exit if there's an error connecting
-  }
-  console.log('Connected to MySQL');
-});
+    if (err) {
+      console.error('Error connecting to MySQL:', err);
+      return; // Exit if there's an error connecting
+    }
+    console.log('Connected to MySQL');
+  });
+  
+  // Example API route
+  app.get('/api/test', (req, res) => {
+    res.send('MySQL connection is working!');
+  });
 
-// Example API route
-app.get('/api/test', (req, res) => {
-  res.send('MySQL connection is working!');
-});
-
-// Login endpoint
+  // Login endpoint
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -86,24 +87,21 @@ app.get('/api/orders', (req, res) => {
   });
 });
 
-
-
-// API route to submit reviews
+// After your other routes in server.js
 app.post('/api/reviews', (req, res) => {
   const { rating, comment, productId } = req.body;
   const date = new Date(); // Get the current date
 
   const query = 'INSERT INTO Review (Rating, Comment, Date, ProductID) VALUES (?, ?, ?, ?)';
   db.query(query, [rating, comment, date, productId], (err, results) => {
-    if (err) {
-      console.error('Error inserting review:', err);
-      return res.status(500).json({ message: 'Error adding review' });
-    }
-    res.status(201).json({ message: 'Review added successfully', reviewId: results.insertId });
+      if (err) {
+          console.error('Error inserting review:', err);
+          return res.status(500).json({ message: 'Error adding review' });
+      }
+      res.status(201).json({ message: 'Review added successfully', reviewId: results.insertId });
   });
 });
 
-// Routes for fetching products
 app.get('/api/light-cigarettes', (req, res) => {
   const query = 'SELECT * FROM LightCigarettes';
   db.query(query, (err, results) => {
@@ -111,10 +109,11 @@ app.get('/api/light-cigarettes', (req, res) => {
       console.error('Error fetching data from database:', err);
       return res.status(500).json({ message: 'Error fetching data' });
     }
-    res.json(results); // Send data as JSON
+    res.json(results);  // Send data as JSON
   });
 });
 
+// Route for fetching heavy cigarettes
 app.get('/api/heavy-cigarettes', (req, res) => {
   const query = 'SELECT * FROM HeavyCigarettes';
   db.query(query, (err, results) => {
@@ -122,10 +121,11 @@ app.get('/api/heavy-cigarettes', (req, res) => {
       console.error('Error fetching data from database:', err);
       return res.status(500).json({ message: 'Error fetching data' });
     }
-    res.json(results); // Send data as JSON
+    res.json(results);  // Send data as JSON
   });
 });
 
+// Route to get hookahs from the database
 app.get('/api/hookahs', (req, res) => {
   const query = 'SELECT ProductID, Name, Price FROM Hookah';
   db.query(query, (err, results) => {
@@ -138,6 +138,7 @@ app.get('/api/hookahs', (req, res) => {
   });
 });
 
+// Route to get resusable vapes from the database
 app.get('/api/reusable-vapes', (req, res) => {
   const query = 'SELECT ProductID, Name, Price FROM ReusableVape';
   db.query(query, (err, results) => {
@@ -150,6 +151,7 @@ app.get('/api/reusable-vapes', (req, res) => {
   });
 });
 
+// Route to get disposable vapes from the database
 app.get('/api/disposable-vapes', (req, res) => {
   const query = 'SELECT ProductID, Name, Price FROM DisposableVape';
   db.query(query, (err, results) => {
@@ -174,6 +176,7 @@ app.get('/api/products/search', (req, res) => {
 
   switch (productType) {
     case 'Cigarette':
+      // Query both LightCigarettes and HeavyCigarettes using LOWER() to ensure a case-insensitive match
       query = `
         SELECT ProductID, 'Light' AS Category, Name, Price FROM LightCigarettes WHERE LOWER(Name) LIKE ?
         UNION
@@ -202,31 +205,127 @@ app.get('/api/products/search', (req, res) => {
   });
 });
 
-// Endpoint to submit orders
+app.get('/api/orders', (req, res) => {
+  const query = 'SELECT * FROM `Order`';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log('Error fetching orders:', err);
+      res.status(500).send('Error fetching orders');
+    } else {
+      // Safely parse Products, handling NULL or invalid JSON cases
+      const ordersWithProducts = results.map(order => ({
+        ...order,
+        Products: order.Products ? JSON.parse(order.Products) : [] // Default to an empty array if NULL
+      }));
+
+      res.json(ordersWithProducts);
+    }
+  });
+});
+
+
+
+// Assuming you are using Express.js
 app.post('/api/submitorder', (req, res) => {
   const { customerID, orderDate, products, totalAmount, address } = req.body;
 
+  // SQL query to insert the order, with status always set to "Placed"
   const insertOrderQuery = `
     INSERT INTO \`Order\` (OrderDate, TotalAmount, ShippingAddress, Status, CustomerID, Products)
     VALUES (?, ?, ?, 'Placed', ?, ?)
   `;
 
+  // Convert products array to JSON
   const productsJSON = JSON.stringify(products);
 
+  // Insert the order into the database
   db.query(insertOrderQuery, [orderDate, totalAmount, address, customerID, productsJSON], (err, result) => {
     if (err) {
       console.error('Error inserting order into database:', err);
       return res.status(500).json({ message: 'Error inserting order into database' });
     }
 
+    // Return success response with the OrderID (which will be auto-generated by the database)
     res.status(200).json({
       message: 'Order submitted successfully',
-      orderID: result.insertId,
+      orderID: result.insertId, // This will give the automatically generated OrderID
     });
   });
 });
 
-// Start the server
+
+// Middleware to log requests
+app.use((req, res, next) => {
+  const { method, url, headers } = req;
+  const ip = req.ip || req.connection.remoteAddress;
+  const userAgent = headers['user-agent'];
+
+  const query = `
+      INSERT INTO RequestLog (Method, URL, IP, Browser, Timestamp)
+      VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  db.query(query, [method, url, ip, userAgent], (err) => {
+      if (err) console.error('Error logging request:', err);
+  });
+
+  next();
+});
+
+// Middleware to log errors
+app.use((err, req, res, next) => {
+  const { method, url } = req;
+  const ip = req.ip || req.connection.remoteAddress;
+
+  const query = `
+      INSERT INTO ErrorLog (Method, URL, IP, ErrorMessage, Timestamp)
+      VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  db.query(query, [method, url, ip, err.message], (dbErr) => {
+      if (dbErr) console.error('Error logging error:', dbErr);
+  });
+
+  res.status(500).json({ message: 'An error occurred' });
+});
+
+// Get statistics from logs
+app.get('/api/logs/statistics', (req, res) => {
+  const query = `
+      SELECT URL, IP, Browser, COUNT(*) AS AccessCount, MIN(Timestamp) AS FirstAccess, MAX(Timestamp) AS LastAccess
+      FROM RequestLog
+      GROUP BY URL, IP, Browser
+      ORDER BY AccessCount DESC
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error('Error fetching statistics:', err);
+          return res.status(500).json({ message: 'Error fetching statistics' });
+      }
+      res.json(results);
+  });
+});
+
+// Get timeline of errors
+app.get('/api/logs/errors', (req, res) => {
+  const query = `
+      SELECT URL, IP, ErrorMessage, Timestamp
+      FROM ErrorLog
+      ORDER BY Timestamp DESC
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error('Error fetching errors:', err);
+          return res.status(500).json({ message: 'Error fetching errors' });
+      }
+      res.json(results);
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+

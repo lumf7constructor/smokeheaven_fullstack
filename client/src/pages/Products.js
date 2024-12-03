@@ -8,6 +8,26 @@ function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [productType, setProductType] = useState(''); // Holds the selected product type
   const [isSearching, setIsSearching] = useState(false); // Track if search is active
+  const [suggestions, setSuggestions] = useState([]); // Holds suggestions for search
+
+  // Handle search input change and fetch suggestions
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (term.trim() === '') {
+      setSuggestions([]); // Clear suggestions if input is empty
+      return;
+    }
+
+    // Fetch suggestions from the server
+    axios
+      .get(`http://localhost:3002/api/products/search?productType=${productType}&brand=${encodeURIComponent(term)}`)
+      .then((response) => {
+        setSuggestions(response.data); // Update suggestions with backend response
+      })
+      .catch((error) => console.error('Error fetching suggestions:', error));
+  };
 
   // Handle search operation
   const handleSearch = () => {
@@ -17,12 +37,14 @@ function Products() {
     }
 
     // Send the request to the server with the productType and searchTerm
-    axios.get(`http://localhost:3002/api/products/search?productType=${productType}&brand=${encodeURIComponent(searchTerm)}`)
-      .then(response => {
+    axios
+      .get(`http://localhost:3002/api/products/search?productType=${productType}&brand=${encodeURIComponent(searchTerm)}`)
+      .then((response) => {
         setProducts(response.data);
         setIsSearching(true); // Set searching state to true
+        setSuggestions([]); // Clear suggestions
       })
-      .catch(error => console.error('Error searching for product:', error));
+      .catch((error) => console.error('Error searching for product:', error));
   };
 
   // Handle cancel search operation
@@ -31,6 +53,7 @@ function Products() {
     setProducts([]);
     setProductType('');
     setIsSearching(false); // Reset searching state
+    setSuggestions([]); // Clear suggestions
   };
 
   // Helper function to get image path based on productType and product details
@@ -89,6 +112,19 @@ function Products() {
     return '/images/default.jpg'; // Default image if no specific match found
   };
 
+  // Helper to format suggestions with matched text highlighted
+  const formatSuggestion = (text, term) => {
+    const index = text.toLowerCase().indexOf(term.toLowerCase());
+    if (index === -1) return text;
+
+    return (
+      <>
+        <strong>{text.slice(0, index + term.length)}</strong>
+        <span style={{ opacity: 0.6 }}>{text.slice(index + term.length)}</span>
+      </>
+    );
+  };
+
   return (
     <div className="products-container">
       <h2>Our Products</h2>
@@ -103,12 +139,32 @@ function Products() {
           <option value="DisposableVape">Disposable Vape</option>
         </select>
 
-        <input
-          type="text"
-          placeholder="Enter brand or name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="search-input-container">
+          <input
+            type="text"
+            placeholder="Enter brand or name..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+          {suggestions.length > 0 && (
+            <ul className="suggestions-list">
+              {suggestions.map((suggestion) => (
+                <li
+                  key={suggestion.ProductID}
+                  className="suggestion-item"
+                  onClick={() => {
+                    setSearchTerm(suggestion.Name); // Set the suggestion as the search term
+                    setSuggestions([]); // Clear suggestions
+                  }}
+                >
+                  {formatSuggestion(suggestion.Name, searchTerm)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <button onClick={handleSearch}>Search</button>
         {isSearching && (
           <button onClick={handleCancelSearch} className="cancel-search-button">Cancel</button>
@@ -140,13 +196,12 @@ function Products() {
         <div className="search-results">
           <h3>Search Results:</h3>
           <div className="product-grid">
-            {products.map(product => (
+            {products.map((product) => (
               <div key={product.ProductID} className="product-card">
                 <img src={getImagePath(product)} alt={product.Name} className="product-image" />
                 <h3 className="product-name">{product.Name}</h3>
                 <p className="product-price">${product.Price}</p>
                 <button className="add-to-cart">Add to Cart</button>
-                {/* Render additional fields based on productType */}
                 {productType === 'Cigarette' && <p>Category: {product.Category}</p>}
                 {productType === 'Hookah' && (
                   <>

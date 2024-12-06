@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors'); // import CORS
 const crypto = require('crypto'); // import crypto for password hashing
+const axios = require('axios'); // import axios for HTTP requests
 
 const app = express();
 const port = 3002;
@@ -9,10 +10,42 @@ const { parse } = require('json2csv');  // Import json2csv's parse function
 const fs = require('fs');
 const path = require('path');
 
-
 // Apply middleware
 app.use(cors());
 app.use(express.json()); // Allows parsing of JSON request bodies
+
+app.get('/api/geo', async (req, res) => {
+  try {
+    const clientIp = '8.8.8.8';  // Temporarily mock a public IP for testing
+    console.log('Client IP:', clientIp);
+
+    const response = await axios.get(`https://ipinfo.io/${clientIp}?token=0e4682524716b8`);
+    console.log('Geolocation API response:', response.data);
+
+    const { loc, ip } = response.data;
+
+    // Check if loc is valid before trying to split it
+    if (!loc) {
+      return res.status(500).json({ error: 'Failed to retrieve location' });
+    }
+
+    const [latitude, longitude] = loc.split(',');
+
+    if (!latitude || !longitude) {
+      return res.status(500).json({ error: 'Failed to retrieve valid coordinates' });
+    }
+
+    res.json({
+      ip,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+  } catch (error) {
+    console.error('Error fetching geolocation data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch geolocation data' });
+  }
+});
+
 
 
 // Middleware to log requests to any route

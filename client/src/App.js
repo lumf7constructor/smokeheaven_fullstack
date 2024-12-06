@@ -17,6 +17,7 @@ import MyCart from './pages/MyCart';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import TokenManager from './components/TokenManager'; // Add TokenManager
+import MapComponent from './pages/MapComponent';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
         <Route path="/mycart" element={<MyCart />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/mapcomponent" element={<MapComponent />} />
       </Routes>
     </Router>
   );

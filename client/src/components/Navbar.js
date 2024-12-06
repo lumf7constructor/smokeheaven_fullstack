@@ -24,7 +24,8 @@ function Navbar() {
       <ul className={`menu ${isMenuOpen ? 'active' : ''}`}>
         <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
         <li><Link to="/products" onClick={() => setMenuOpen(false)}>Products</Link></li>
-        <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact Us</Link></li>
+        {/* <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact Us</Link></li> */}
+        <li><Link to="/mapcomponent" onClick={() => setMenuOpen(false)}>Map Component</Link></li>
         <li><Link to="/review" onClick={() => setMenuOpen(false)}>Review</Link></li>
         <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Orders</Link></li>
         <li><Link to="/mycart" onClick={() => setMenuOpen(false)}>
